@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>
+    HTML Word Parser
+  </title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <p> введите адрес сайта</p>
+  <p></p>
+  <input type="text" id="link" />
+  <button onclick="as()">Parse</button>
+  <table id="result"></table>
+
+  <script>
+    function as()
+    {
+      var get_link = document.getElementById('link').value;
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', `http://localhost:3000/parse?url=${get_link}`, false);
+      xhr.send();
+
+      var table = document.createElement('table'), tr, td, row, cell;
+
+      tr = document.createElement('tr');
+      for (cell = 0; cell < 3; cell++)
+      {
+        td = document.createElement('td');
+        tr.appendChild(td);
+        switch (cell)
+        {
+          case 1:
+            td.innerHTML = "Слово";
+            break;
+          case 2:
+            td.innerHTML = "Встречаемость";
+            break;
+          case 0:
+            td.innerHTML = "#";
+        }
+      }
+      table.appendChild(tr);
+
+      for (row = 0; row < JSON.parse(xhr.responseText).length; row++)
+      {
+        tr = document.createElement('tr');
+
+        for (cell = 0; cell < 3; cell++)
+        {
+          td = document.createElement('td');
+          tr.appendChild(td);
+          switch (cell)
+          {
+            case 1:
+              td.innerHTML = JSON.parse(xhr.responseText)[row].name;
+              break;
+            case 2:
+              td.innerHTML = JSON.parse(xhr.responseText)[row].count;
+              break;
+            case 0:
+              td.innerHTML = row + 1;
+          }
+        }
+        table.appendChild(tr);
+    }
+    document.getElementById('result').appendChild(table);
+    }
+  </script>
+</body>
