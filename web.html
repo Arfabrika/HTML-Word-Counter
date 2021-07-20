@@ -13,11 +13,43 @@
   <p> введите адрес сайта</p>
   <p></p>
   <input type="text" id="link" />
-  <button onclick="as()">Parse</button>
+  <button onclick="parse()">Parse</button>
+  <button onclick="clearField()">Clear input field</button>
+  <button onclick="downloadResult()">Download result</button>
+  <p id="no_link"></p>
   <table id="result"></table>
 
   <script>
-    function as()
+    var clicks = 0, array_size = 0, word_array;
+
+    /* Clear input field function */
+    function clearField()
+    {
+      document.getElementById("link").value = "";
+    }
+
+    function downloadResult()
+    {
+      if (array_size == 0)
+        document.getElementById('no_link').innerHTML = 'Input a link first!';
+      else
+      {
+        var text = "";
+        word_array.forEach((item) => {
+          text += "Слово " + item.name + " встретилось " + item.count + " раз\n";
+        });
+
+        let a = document.createElement("a");
+        let file = new Blob([text], {type: 'application/json'});
+
+        a.href = URL.createObjectURL(file);
+        a.download = "parse_result.txt";
+        a.click();
+      }
+    }
+
+    /* Output parser results function */
+    function parse()
     {
       var get_link = document.getElementById('link').value;
 
@@ -25,6 +57,9 @@
       xhr.open('GET', `http://localhost:3000/parse?url=${get_link}`, false);
       xhr.send();
 
+      if (clicks > 0)
+        document.getElementById('result').innerHTML = "";
+      document.getElementById('no_link').innerHTML = "";
       var table = document.createElement('table'), tr, td, row, cell;
 
       tr = document.createElement('tr');
@@ -46,7 +81,9 @@
       }
       table.appendChild(tr);
 
-      for (row = 0; row < JSON.parse(xhr.responseText).length; row++)
+      array_size = JSON.parse(xhr.responseText).length;
+      word_array = JSON.parse(xhr.responseText);
+      for (row = 0; row < array_size; row++)
       {
         tr = document.createElement('tr');
 
@@ -69,6 +106,7 @@
         table.appendChild(tr);
     }
     document.getElementById('result').appendChild(table);
+    clicks++;
     }
   </script>
 </body>

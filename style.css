@@ -1,6 +1,6 @@
 /* FILE NAME: style.css
  * PROGRAMMER: Fabrika Artem
- * DATE: 13.07.2021
+ * DATE: 20.07.2021
  * PERPOSE: site design file
  */
 
@@ -15,9 +15,16 @@ h1
     font-family: Arial, Helvetica, sans-serif;
 }
 
-td
+table
 {
-   border: 1px solid black;
+    width: auto;
+    border-collapse: collapse;
+}
+
+td, th
+{
+    padding: 3px;
+    border: 1px solid black;
 }
 
 /* END OF 'style.css' FILE */

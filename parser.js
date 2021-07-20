@@ -1,6 +1,6 @@
 /* FILE NAME: parser.js
  * PROGRAMMER: Fabrika Artem
- * DATE: 13.07.2021
+ * DATE: 17.07.2021
  * PERPOSE: parser and utilits file
  */
 
@@ -37,7 +37,7 @@ function findWord(word)
 {
   for (var i = 0; i < word_array.length; i++)
   {
-    if (word_array[i].name == word)
+    if (word_array[i].name.toUpperCase() == word.toUpperCase())
     {
       word_array[i].count++;
       return 1;
@@ -80,7 +80,7 @@ request(URL, function (error, response, html) {
   {
     var $ = cheerio.load(html);
     var site_text = new Array();
-    var sep_symbs = new Array("\n", "\r", "\t", ",", " ", ";", ":", ""), tmp;
+    var sep_symbs = new Array("\n", "\r", "\t", ",", " ", ";", ":", ")", "(", "{", "}", ".", ""), tmp;
 
     $('div').each(function(i, element){
       var a = $(this).prev();
@@ -88,7 +88,7 @@ request(URL, function (error, response, html) {
       site_text.push(a.text());
     });
     site_text.forEach((item, i) => {
-      if (item != "")
+      if (item != "" && item != undefined)
       {
         while (item.length >= 0)
         {
@@ -105,7 +105,19 @@ request(URL, function (error, response, html) {
             word = item, item = "";
           else
             item = new_str;
+
           tmp = sep_symbs.indexOf(word);
+
+          if (tmp == -1)
+          {
+            for (let i = 0; i < sep_symbs.length - 1; i++)
+            {
+              if (word.startsWith(sep_symbs[i]))
+                word = word.slice(1);
+              if (word.endsWith(sep_symbs[i]))
+                word = word.slice(0, word.length - 1);
+            }
+          }
           if (!findWord(word) && tmp == -1)
             word_array.push(new Word(word, 1));
         }
